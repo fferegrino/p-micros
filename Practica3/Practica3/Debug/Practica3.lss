@@ -3,19 +3,19 @@ Practica3.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         00000014  00800100  000000ee  00000162  2**0
+  0 .data         00000014  00800100  000000f0  00000164  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  1 .text         000000ee  00000000  00000000  00000074  2**1
+  1 .text         000000f0  00000000  00000000  00000074  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .comment      00000030  00000000  00000000  00000176  2**0
+  2 .comment      00000030  00000000  00000000  00000178  2**0
                   CONTENTS, READONLY
-  3 .debug_aranges 00000020  00000000  00000000  000001a6  2**0
+  3 .debug_aranges 00000020  00000000  00000000  000001a8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_info   00000159  00000000  00000000  000001c6  2**0
+  4 .debug_info   00000159  00000000  00000000  000001c8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_abbrev 00000109  00000000  00000000  0000031f  2**0
+  5 .debug_abbrev 00000109  00000000  00000000  00000321  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_line   00000152  00000000  00000000  00000428  2**0
+  6 .debug_line   00000152  00000000  00000000  0000042a  2**0
                   CONTENTS, READONLY, DEBUGGING
   7 .debug_frame  00000034  00000000  00000000  0000057c  2**2
                   CONTENTS, READONLY, DEBUGGING
@@ -68,7 +68,7 @@ Disassembly of section .text:
   40:	11 e0       	ldi	r17, 0x01	; 1
   42:	a0 e0       	ldi	r26, 0x00	; 0
   44:	b1 e0       	ldi	r27, 0x01	; 1
-  46:	ee ee       	ldi	r30, 0xEE	; 238
+  46:	e0 ef       	ldi	r30, 0xF0	; 240
   48:	f0 e0       	ldi	r31, 0x00	; 0
   4a:	02 c0       	rjmp	.+4      	; 0x50 <__do_copy_data+0x10>
   4c:	05 90       	lpm	r0, Z+
@@ -77,7 +77,7 @@ Disassembly of section .text:
   52:	b1 07       	cpc	r27, r17
   54:	d9 f7       	brne	.-10     	; 0x4c <__do_copy_data+0xc>
   56:	02 d0       	rcall	.+4      	; 0x5c <main>
-  58:	48 c0       	rjmp	.+144    	; 0xea <_exit>
+  58:	49 c0       	rjmp	.+146    	; 0xec <_exit>
 
 0000005a <__bad_interrupt>:
   5a:	d2 cf       	rjmp	.-92     	; 0x0 <__vectors>
@@ -106,96 +106,97 @@ int main(void)
 	DDRD = 0xFF;
   74:	8a b9       	out	0x0a, r24	; 10
 	
-	DDRC = 0b00000000;
-  76:	17 b8       	out	0x07, r1	; 7
+	DDRC = 0b11000000;
+  76:	80 ec       	ldi	r24, 0xC0	; 192
+  78:	87 b9       	out	0x07, r24	; 7
 	
 	uint8_t status = 0;                                /* Define a 8 bit integer variable */
 	uint8_t prev = 0;
 	status = PINC & 0b00111111;
-  78:	36 b1       	in	r19, 0x06	; 6
-  7a:	3f 73       	andi	r19, 0x3F	; 63
+  7a:	36 b1       	in	r19, 0x06	; 6
+  7c:	3f 73       	andi	r19, 0x3F	; 63
 	status += 1;
-  7c:	3f 5f       	subi	r19, 0xFF	; 255
+  7e:	3f 5f       	subi	r19, 0xFF	; 255
 	prev = 0;
 	int nums[10] = { 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F };
-  7e:	84 e1       	ldi	r24, 0x14	; 20
-  80:	e0 e0       	ldi	r30, 0x00	; 0
-  82:	f1 e0       	ldi	r31, 0x01	; 1
-  84:	de 01       	movw	r26, r28
-  86:	11 96       	adiw	r26, 0x01	; 1
-  88:	01 90       	ld	r0, Z+
-  8a:	0d 92       	st	X+, r0
-  8c:	8a 95       	dec	r24
-  8e:	e1 f7       	brne	.-8      	; 0x88 <main+0x2c>
+  80:	84 e1       	ldi	r24, 0x14	; 20
+  82:	e0 e0       	ldi	r30, 0x00	; 0
+  84:	f1 e0       	ldi	r31, 0x01	; 1
+  86:	de 01       	movw	r26, r28
+  88:	11 96       	adiw	r26, 0x01	; 1
+  8a:	01 90       	ld	r0, Z+
+  8c:	0d 92       	st	X+, r0
+  8e:	8a 95       	dec	r24
+  90:	e1 f7       	brne	.-8      	; 0x8a <main+0x2e>
 	uint8_t x = 0;
     while(1)
     {
 			for(x = 0; status; x++)
-  90:	80 e0       	ldi	r24, 0x00	; 0
+  92:	80 e0       	ldi	r24, 0x00	; 0
 			{
 				
 				status -= 1;
 				PORTB =  nums[x / 10];	// Derecha
-  92:	4d ec       	ldi	r20, 0xCD	; 205
-  94:	27 c0       	rjmp	.+78     	; 0xe4 <main+0x88>
-  96:	84 9f       	mul	r24, r20
-  98:	91 2d       	mov	r25, r1
-  9a:	11 24       	eor	r1, r1
-  9c:	96 95       	lsr	r25
+  94:	4d ec       	ldi	r20, 0xCD	; 205
+  96:	27 c0       	rjmp	.+78     	; 0xe6 <main+0x8a>
+  98:	84 9f       	mul	r24, r20
+  9a:	91 2d       	mov	r25, r1
+  9c:	11 24       	eor	r1, r1
   9e:	96 95       	lsr	r25
   a0:	96 95       	lsr	r25
-  a2:	e9 2f       	mov	r30, r25
-  a4:	f0 e0       	ldi	r31, 0x00	; 0
-  a6:	ee 0f       	add	r30, r30
-  a8:	ff 1f       	adc	r31, r31
-  aa:	61 e0       	ldi	r22, 0x01	; 1
-  ac:	70 e0       	ldi	r23, 0x00	; 0
-  ae:	6c 0f       	add	r22, r28
-  b0:	7d 1f       	adc	r23, r29
-  b2:	e6 0f       	add	r30, r22
-  b4:	f7 1f       	adc	r31, r23
-  b6:	20 81       	ld	r18, Z
-  b8:	25 b9       	out	0x05, r18	; 5
+  a2:	96 95       	lsr	r25
+  a4:	e9 2f       	mov	r30, r25
+  a6:	f0 e0       	ldi	r31, 0x00	; 0
+  a8:	ee 0f       	add	r30, r30
+  aa:	ff 1f       	adc	r31, r31
+  ac:	61 e0       	ldi	r22, 0x01	; 1
+  ae:	70 e0       	ldi	r23, 0x00	; 0
+  b0:	6c 0f       	add	r22, r28
+  b2:	7d 1f       	adc	r23, r29
+  b4:	e6 0f       	add	r30, r22
+  b6:	f7 1f       	adc	r31, r23
+  b8:	20 81       	ld	r18, Z
+  ba:	25 b9       	out	0x05, r18	; 5
 				PORTD =  nums[x % 10];	// Izquierda
-  ba:	99 0f       	add	r25, r25
-  bc:	29 2f       	mov	r18, r25
-  be:	22 0f       	add	r18, r18
+  bc:	99 0f       	add	r25, r25
+  be:	29 2f       	mov	r18, r25
   c0:	22 0f       	add	r18, r18
-  c2:	92 0f       	add	r25, r18
-  c4:	e8 2f       	mov	r30, r24
-  c6:	e9 1b       	sub	r30, r25
-  c8:	f0 e0       	ldi	r31, 0x00	; 0
-  ca:	ee 0f       	add	r30, r30
-  cc:	ff 1f       	adc	r31, r31
-  ce:	e6 0f       	add	r30, r22
-  d0:	f7 1f       	adc	r31, r23
-  d2:	90 81       	ld	r25, Z
-  d4:	9b b9       	out	0x0b, r25	; 11
+  c2:	22 0f       	add	r18, r18
+  c4:	92 0f       	add	r25, r18
+  c6:	e8 2f       	mov	r30, r24
+  c8:	e9 1b       	sub	r30, r25
+  ca:	f0 e0       	ldi	r31, 0x00	; 0
+  cc:	ee 0f       	add	r30, r30
+  ce:	ff 1f       	adc	r31, r31
+  d0:	e6 0f       	add	r30, r22
+  d2:	f7 1f       	adc	r31, r23
+  d4:	90 81       	ld	r25, Z
+  d6:	9b b9       	out	0x0b, r25	; 11
 	#else
 		//round up by default
 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
-  d6:	e7 ea       	ldi	r30, 0xA7	; 167
-  d8:	f1 e6       	ldi	r31, 0x61	; 97
-  da:	31 97       	sbiw	r30, 0x01	; 1
-  dc:	f1 f7       	brne	.-4      	; 0xda <main+0x7e>
-  de:	00 c0       	rjmp	.+0      	; 0xe0 <main+0x84>
-  e0:	00 00       	nop
+  d8:	ef e4       	ldi	r30, 0x4F	; 79
+  da:	f3 ec       	ldi	r31, 0xC3	; 195
+  dc:	31 97       	sbiw	r30, 0x01	; 1
+  de:	f1 f7       	brne	.-4      	; 0xdc <main+0x80>
+  e0:	00 c0       	rjmp	.+0      	; 0xe2 <main+0x86>
+  e2:	00 00       	nop
 	prev = 0;
 	int nums[10] = { 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F };
 	uint8_t x = 0;
     while(1)
     {
 			for(x = 0; status; x++)
-  e2:	8f 5f       	subi	r24, 0xFF	; 255
-  e4:	83 13       	cpse	r24, r19
-  e6:	d7 cf       	rjmp	.-82     	; 0x96 <main+0x3a>
-  e8:	ff cf       	rjmp	.-2      	; 0xe8 <main+0x8c>
+  e4:	8f 5f       	subi	r24, 0xFF	; 255
+  e6:	83 13       	cpse	r24, r19
+  e8:	d7 cf       	rjmp	.-82     	; 0x98 <main+0x3c>
+  ea:	ff cf       	rjmp	.-2      	; 0xea <main+0x8e>
 
-000000ea <_exit>:
-  ea:	f8 94       	cli
+000000ec <_exit>:
+  ec:	f8 94       	cli
 
-000000ec <__stop_program>:
-  ec:	ff cf       	rjmp	.-2      	; 0xec <__stop_program>
+000000ee <__stop_program>:
+  ee:	ff cf       	rjmp	.-2      	; 0xee <__stop_program>

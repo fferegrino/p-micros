@@ -38,12 +38,14 @@ int main (void) {
 }
 ISR(INT0_vect) //Vector de interrupción externa del INT0
 {
+	_delay_ms(300);
 	d1++;
 }
 
 
 ISR(INT1_vect) //Vector de interrupción externa del INT0
 {
+	_delay_ms(300);
 	d2++;
 }
 
